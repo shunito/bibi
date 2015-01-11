@@ -35,7 +35,7 @@ S = {}; // Bibi.Setting
 
 X = {}; // Bibi.Extra
 
-
+Bibi.plugin = {}; // Bibi.Plugins
 
 
 //==============================================================================================================================================
@@ -279,6 +279,19 @@ L.initialize = function() {
 		P.FileName = PresetFileName;
 	}
 	O.log(3, 'preset: ' + PresetFileName);
+
+	// load Plugin Files
+	if(P.plugins){
+		var p, s, plugin;
+		O.log(2, 'Plugin Loading...');
+		for( p in P.plugins ){
+			plugin = P.plugins[p];
+			s = plugin.script;
+			sML.insertAfter(sML.create("script"), document.getElementById("bibi-script")).src = "../plugin/" + s;
+			O.log(3, s );
+		}
+		O.log(2, 'Plugin Loaded.');
+	}
 
 	O.log(2, 'Initialized.');
 
@@ -1025,6 +1038,9 @@ L.start = function() {
 
 	R.Started = true;
 
+	// Plugin hook point 
+	Bibi.plugin.call("loadEPUB");
+
 	O.log(1, 'Enjoy!');
 
 }
@@ -1419,6 +1435,9 @@ R.layout = function(Param) {
 
 	window.addEventListener(O.SmartPhone ? "orientationchange" : "resize", R.onresize);
 
+	// Plugin hook point 
+	Bibi.plugin.call("laidOut");
+
 	return S;
 
 }
@@ -1612,6 +1631,10 @@ R.focus = function(Target, ScrollOption) {
 			if(PageMargin > 0) FocusPoint -= PageMargin * S.AXIS.PM;
 		}
 	}
+
+	// Plugin hook point 
+	Bibi.plugin.call("focusPage");
+
 	if(S.SLD == "rtl") FocusPoint = FocusPoint - window["inner" + S.SIZE.L];
 	sML.scrollTo((S.SLD == "ttb" ? { Y:FocusPoint * R.Scale } : { X:FocusPoint * R.Scale }), ScrollOption);
 	return false;
@@ -1833,6 +1856,9 @@ C.createPanel = function() {
 				sML.style(R.Contents, { transition: "0.2s ease-in" });
 				sML.addClass(O.HTML, "panel-opened");
 				setTimeout(Cb, 250);
+				
+				// Plugin hook point 
+				Bibi.plugin.call("openPanel");
 				return this.State;
 			},
 			close: function(Cb) {
@@ -1843,6 +1869,9 @@ C.createPanel = function() {
 				sML.style(R.Contents, { transition: "0.2s ease-out" });
 				sML.removeClass(O.HTML, "panel-opened");
 				setTimeout(Cb, 250);
+
+				// Plugin hook point 
+				Bibi.plugin.call("closePanel");
 				return this.State;
 			},
 			toggle: function(Cb) {
@@ -1996,8 +2025,16 @@ C.createArrows = function() {
 		sML.create("div", { id: "bibi-arrows" }, { transition: "opacity 0.75s linear", opacity: 0 })
 	);
 
-	C.Arrows.Back    =   C.Arrows.appendChild(sML.create("div", { title: "Back",    className: "bibi-arrow", id: "bibi-arrow-back",    onclick: function() { R.page(-1); } }));
-	C.Arrows.Forward =   C.Arrows.appendChild(sML.create("div", { title: "Forward", className: "bibi-arrow", id: "bibi-arrow-forward", onclick: function() { R.page(+1); } }));
+	C.Arrows.Back    =   C.Arrows.appendChild(sML.create("div", { title: "Back",    className: "bibi-arrow", id: "bibi-arrow-back",    onclick: function() {
+			// Plugin hook point 
+			Bibi.plugin.call("beforeBack");
+			R.page(-1);
+		 } }));
+	C.Arrows.Forward =   C.Arrows.appendChild(sML.create("div", { title: "Forward", className: "bibi-arrow", id: "bibi-arrow-forward", onclick: function() {
+			// Plugin hook point 
+			Bibi.plugin.call("beforeForward");
+			R.page(+1);
+		} }));
 
 	sML.each([C.Arrows.Back, C.Arrows.Forward], function() {
 		this.addEventListener("mouseover", function() { if(this.clickedTimer) clearTimeout(this.clickedTimer); sML.addClass(this, "shown"); });
@@ -2355,6 +2392,26 @@ O.ContentTypeList = {
 };
 
 
+
+// Bibi Plugin
+Bibi.plugin.fn = [];
+Bibi.plugin.addEvent = function( event, func ){
+	Bibi.plugin.fn.push([event, func]);
+}
+
+Bibi.plugin.call = function( event, scope ){
+	var f, e, func;
+
+	for( f in Bibi.plugin.fn){
+		e = Bibi.plugin.fn[f][0];
+		if(e === event ){
+			func = Bibi.plugin.fn[f][1];
+			if ( typeof func === 'function' ){
+			  func.call(scope);
+		  }
+    }
+  }
+}
 
 
 //==============================================================================================================================================
