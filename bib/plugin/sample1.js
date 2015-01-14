@@ -13,6 +13,15 @@ Bibi.plugin.sample1.init = function(){
 
 	Bibi.plugin.addEvent("loadEPUB", function(){
 		console.log("Plugin call:: sample1 loadEPUB");
+		
+		Bibi.plugin.addMenu(
+		  { id: "pluginbtn1",
+  		  label: " Plugin Button 1",
+  		  img: "../plugin/icon/info_24x24.png" },
+      function(){
+  		  console.log("Plugin menu button :: sample1");		
+  		  alert("プラグインで追加したボタンをクリックしました");
+  		});
 	});
 
 	Bibi.plugin.addEvent("beforeBack", function(){

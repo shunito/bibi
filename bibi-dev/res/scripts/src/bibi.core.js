@@ -1946,6 +1946,9 @@ C.createPanel = function() {
 		)
 	}
 
+	// Plugin Menu
+	C.Panel.Menu["plugin-menus"] = C.Panel.Menu.appendChild(sML.create("ul", { id: "plugin-menus" }));
+
 	sML.each(C.Panel.Menu.getElementsByClassName("bibi-icon"), function() { this.innerHTML = '<span class="non-visual">' + this.title + '</span>' + this.innerHTML; });
 
 }
@@ -2413,6 +2416,30 @@ Bibi.plugin.call = function( event, scope ){
   }
 }
 
+Bibi.plugin.addMenu = function( btn, func ){
+
+	var id = btn.id,
+			label = btn.label,
+			img = btn.img,
+			iconInnerHTML;
+	
+	// TODO: cleaning
+	iconInnerHTML = [
+				'<span class="bibi-icon"',
+				' title="', label, '"',
+				' id="', id, '"',
+				' style="background: url(', img ,') no-repeat center;">',
+					label,
+				'</span>'
+		].join("");
+	
+  C.Panel.Menu["plugin-menus"].appendChild(
+    sML.create("li", { className: "plugin-menu", innerHTML: iconInnerHTML,
+      onclick: function(){ func(); }
+    })
+  );
+  
+}
 
 //==============================================================================================================================================
 //----------------------------------------------------------------------------------------------------------------------------------------------
