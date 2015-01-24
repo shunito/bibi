@@ -22,7 +22,7 @@ Bibi.plugin.ga.init = function(){
 	var userTracking = false;
 	/////////////////////////////////////////////////////////////////
 	
-	var name;
+	var name = '';
 
 	// GA トラッキングコード
 	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -34,33 +34,33 @@ Bibi.plugin.ga.init = function(){
 	if( userTracking && typeof user_id != "undefined" ){ ga('set','&uid', user_id ); }
 	ga('send', 'pageview');
 
-	Bibi.plugin.addEvent("loadEPUB", function(){
-		name = B.Name
-		ga('send', 'event', name , 'open', 'Bib/i' );
+	Bibi.plugin.bind("load", function(){
+		ga('send', 'event', B.Name , 'open', name );
 	});
 
-	Bibi.plugin.addEvent("beforeBack", function(){
+	Bibi.plugin.bind("back", function(){
+		var CurrentPages = R.getCurrentPages();
 		ga('send', 'event', name , 'navi', 'back');
 	});
 
-	Bibi.plugin.addEvent("beforeForward", function(){
+	Bibi.plugin.bind("forward", function(){
 		ga('send', 'event', name , 'navi', 'forward');
 	});
 
-	Bibi.plugin.addEvent("focusPage", function(){
+	Bibi.plugin.bind("focus", function(){
 		var CurrentPages = R.getCurrentPages();
-		ga('send', 'event', name , 'focus', CurrentPages.Start.PageIndex );
+		var page = CurrentPages.Start.PageIndex +1;
+		ga('send', 'event', B.Name , 'focus', 'page' , page );
 	});
 
-	Bibi.plugin.addEvent("openPanel", function(){
-		ga('send', 'event', name , 'menu', 'open');
+	Bibi.plugin.bind("openPanel", function(){
+		ga('send', 'event', B.Name , 'menu', 'open');
 	});
 
-	Bibi.plugin.addEvent("laidOut", function(){
-		var layout = [ S["book-display-mode"], S["spread-layout-axis"],S["page-size-format"] ].join("-");
-		ga('send', 'event', name , 'layout', layout);
+	Bibi.plugin.bind("laidOut", function(){
+      var layout = [ S["book-display-mode"], S["spread-layout-axis"],S["page-size-format"] ].join("-");
+      ga('send', 'event', B.Name , 'layout fixed', layout);
 	});
-
 }
 
 // Init

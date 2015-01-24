@@ -1039,7 +1039,7 @@ L.start = function() {
 	R.Started = true;
 
 	// Plugin hook point 
-	Bibi.plugin.call("loadEPUB");
+	Bibi.plugin.call("load");
 
 	O.log(1, 'Enjoy!');
 
@@ -1632,11 +1632,11 @@ R.focus = function(Target, ScrollOption) {
 		}
 	}
 
-	// Plugin hook point 
-	Bibi.plugin.call("focusPage");
-
 	if(S.SLD == "rtl") FocusPoint = FocusPoint - window["inner" + S.SIZE.L];
 	sML.scrollTo((S.SLD == "ttb" ? { Y:FocusPoint * R.Scale } : { X:FocusPoint * R.Scale }), ScrollOption);
+
+	// Plugin hook point 
+	Bibi.plugin.call("focus");
 	return false;
 }
 
@@ -2030,12 +2030,12 @@ C.createArrows = function() {
 
 	C.Arrows.Back    =   C.Arrows.appendChild(sML.create("div", { title: "Back",    className: "bibi-arrow", id: "bibi-arrow-back",    onclick: function() {
 			// Plugin hook point 
-			Bibi.plugin.call("beforeBack");
+			Bibi.plugin.call("back");
 			R.page(-1);
 		 } }));
 	C.Arrows.Forward =   C.Arrows.appendChild(sML.create("div", { title: "Forward", className: "bibi-arrow", id: "bibi-arrow-forward", onclick: function() {
 			// Plugin hook point 
-			Bibi.plugin.call("beforeForward");
+			Bibi.plugin.call("forward");
 			R.page(+1);
 		} }));
 
@@ -2398,47 +2398,59 @@ O.ContentTypeList = {
 
 // Bibi Plugin
 Bibi.plugin.fn = [];
-Bibi.plugin.addEvent = function( event, func ){
-	Bibi.plugin.fn.push([event, func]);
+
+Bibi.plugin.bind = function( event, func ){
+	if( typeof Bibi.plugin.fn[ event ] === 'undefined'){
+		Bibi.plugin.fn[ event ] = [];
+	}
+	Bibi.plugin.fn[ event ].push( func );
+
+	// return 'event-id'
+	return [ event, Bibi.plugin.fn[ event ].length -1 ].join('-');
 }
 
-Bibi.plugin.call = function( event, scope ){
-	var f, e, func;
+Bibi.plugin.unbind = function( event ){
+	var e = event.split("-");
+	
+	if( e.length === 1 ){
+		delete Bibi.plugin.fn[ event ];
+		return;
+	}
+	delete Bibi.plugin.fn[ e[0] ][ parseInt(e[1]) ];
+}
 
-	for( f in Bibi.plugin.fn){
-		e = Bibi.plugin.fn[f][0];
-		if(e === event ){
-			func = Bibi.plugin.fn[f][1];
-			if ( typeof func === 'function' ){
-			  func.call(scope);
-		  }
-    }
-  }
+
+Bibi.plugin.call = function( event ){
+	var f, e, func, fn = Bibi.plugin.fn[event];
+	if( typeof fn === 'undefined'){ return; }
+
+	for( f in fn ){
+		func = fn[f];
+		if ( typeof func === 'function' ){
+			func.call();
+		}
+	}
 }
 
 Bibi.plugin.addMenu = function( btn, func ){
-
 	var id = btn.id,
 			label = btn.label,
 			img = btn.img,
 			iconInnerHTML;
-	
+
 	// TODO: cleaning
 	iconInnerHTML = [
-				'<span class="bibi-icon"',
-				' title="', label, '"',
-				' id="', id, '"',
-				' style="background: url(', img ,') no-repeat center;">',
-					label,
-				'</span>'
-		].join("");
-	
-  C.Panel.Menu["plugin-menus"].appendChild(
-    sML.create("li", { className: "plugin-menu", innerHTML: iconInnerHTML,
-      onclick: function(){ func(); }
-    })
-  );
-  
+		'<span class="bibi-icon"',
+		' title="', label, '"',
+		' id="', id, '"',
+		' style="background: url(', img ,') no-repeat center;">',
+			label,
+		'</span>' ].join("");
+
+	C.Panel.Menu["plugin-menus"].appendChild(
+		sML.create("li", { className: "plugin-menu", innerHTML: iconInnerHTML,
+		onclick: function(){ func(); }
+		}));
 }
 
 //==============================================================================================================================================

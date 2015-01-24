@@ -11,27 +11,27 @@ Bibi.plugin.sample2 = {
 Bibi.plugin.sample2.init = function(){
 	O.log(2, "plugin " + this.name + " loaded");
 
-	Bibi.plugin.addEvent("loadEPUB", function(){
+	Bibi.plugin.bind("loadEPUB", function(){
 		console.log("Plugin call:: sample2 loadEPUB");
 	});
 
-	Bibi.plugin.addEvent("beforeForward", function(){
+	Bibi.plugin.bind("beforeForward", function(){
 		console.log("Plugin call:: sample2 beforeForward 1");
 	});
 
-	Bibi.plugin.addEvent("beforeBack", function(){
+	Bibi.plugin.bind("beforeBack", function(){
 		console.log("Plugin call:: sample2 beforeBack 2");
 	});
 
-	Bibi.plugin.addEvent("closePanel", function(){
+	Bibi.plugin.bind("closePanel", function(){
 		console.log("Plugin call:: sample2 closePanel");
 	});
 
-	Bibi.plugin.addEvent("laidOut", function(){
+	Bibi.plugin.bind("laidOut", function(){
 		console.log("Plugin call:: sample2 laidOut");
 	});
 
-	Bibi.plugin.addEvent("focusPage", function(){
+	Bibi.plugin.bind("focusPage", function(){
 		console.log("Plugin call:: sample2 focusPage");
 	});
 

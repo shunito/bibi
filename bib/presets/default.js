@@ -32,7 +32,7 @@ P = {
 	"epub-additional-script"            : "",
 
 	"plugins"                           : [
-	                                        {"name":"Sample Plugin1","script":"sample1.js"},
-	                                        {"name":"Sample Plugin2","script":"sample2.js"}  ],
+	                                        {"name":"Google Analytics","script":"GoogleAnalytics.js"},
+	                                        {"name":"Sample Plugin1","script":"sample1.js"}  ],
 
 "loaded": true } // do not edit.
