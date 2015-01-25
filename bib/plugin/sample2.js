@@ -11,15 +11,15 @@ Bibi.plugin.sample2 = {
 Bibi.plugin.sample2.init = function(){
 	O.log(2, "plugin " + this.name + " loaded");
 
-	Bibi.plugin.bind("loadEPUB", function(){
+	Bibi.plugin.bind("load", function(){
 		console.log("Plugin call:: sample2 loadEPUB");
 	});
 
-	Bibi.plugin.bind("beforeForward", function(){
+	Bibi.plugin.bind("forward", function(){
 		console.log("Plugin call:: sample2 beforeForward 1");
 	});
 
-	Bibi.plugin.bind("beforeBack", function(){
+	Bibi.plugin.bind("back", function(){
 		console.log("Plugin call:: sample2 beforeBack 2");
 	});
 
@@ -31,7 +31,7 @@ Bibi.plugin.sample2.init = function(){
 		console.log("Plugin call:: sample2 laidOut");
 	});
 
-	Bibi.plugin.bind("focusPage", function(){
+	Bibi.plugin.bind("focus", function(){
 		console.log("Plugin call:: sample2 focusPage");
 	});
 

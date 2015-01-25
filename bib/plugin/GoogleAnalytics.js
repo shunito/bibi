@@ -4,10 +4,11 @@
  */
 
 Bibi.plugin.ga = {
-	name: "Google Analytics",
-	discription: "Google Analytics for Bib/i",
-	author: "Shunsuke Ito",
-	version: "0.1"
+	name        : "Google Analytics",
+	discription : "Google Analytics Plugin for Bib/i",
+	author      : "Shunsuke Ito",
+	version     : "0.2",
+	Build       : "2015-01-25"
 };
 
 Bibi.plugin.ga.init = function(){
@@ -22,8 +23,6 @@ Bibi.plugin.ga.init = function(){
 	var userTracking = false;
 	/////////////////////////////////////////////////////////////////
 	
-	var name = '';
-
 	// GA トラッキングコード
 	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -35,31 +34,36 @@ Bibi.plugin.ga.init = function(){
 	ga('send', 'pageview');
 
 	Bibi.plugin.bind("load", function(){
-		ga('send', 'event', B.Name , 'open', name );
+		ga('send', 'event', B.Name , 'open', B.Name , 1);
+
+		var CurrentPages = R.getCurrentPages();
+		var page = CurrentPages.Start.PageIndex +1;
+		var vPage = '/' + [ 'bibi' ,B.Name , page ].join("/");
+		ga('send', 'event', B.Name, 'page', {'page': vPage });
 	});
 
 	Bibi.plugin.bind("back", function(){
-		var CurrentPages = R.getCurrentPages();
-		ga('send', 'event', name , 'navi', 'back');
+		ga('send', 'event', B.Name , 'navi', 'back' ,1);
 	});
 
 	Bibi.plugin.bind("forward", function(){
-		ga('send', 'event', name , 'navi', 'forward');
+		ga('send', 'event', B.Name , 'navi', 'forward', 1);
 	});
 
 	Bibi.plugin.bind("focus", function(){
 		var CurrentPages = R.getCurrentPages();
 		var page = CurrentPages.Start.PageIndex +1;
-		ga('send', 'event', B.Name , 'focus', 'page' , page );
+		var vPage = '/' + [ 'bibi' ,B.Name , page ].join("/");
+		ga('send', 'event', B.Name, 'page', {'page': vPage });
 	});
 
 	Bibi.plugin.bind("openPanel", function(){
-		ga('send', 'event', B.Name , 'menu', 'open');
+		ga('send', 'event', B.Name , 'menu', 'open' ,1);
 	});
 
 	Bibi.plugin.bind("laidOut", function(){
-      var layout = [ S["book-display-mode"], S["spread-layout-axis"],S["page-size-format"] ].join("-");
-      ga('send', 'event', B.Name , 'layout fixed', layout);
+	  var layout = [ S["book-display-mode"], S["spread-layout-axis"],S["page-size-format"] ].join("-");
+	  ga('send', 'event', B.Name , 'layout fixed', layout);
 	});
 }
 

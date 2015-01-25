@@ -26,6 +26,9 @@ Bibi.plugin.sample1.init = function(){
           Bibi.plugin.unbind( f1 );
           Bibi.plugin.unbind( 'openPanel' );
           alert("プラグインで追加したボタンをクリックしました");
+          
+          // delete this Menu
+          Bibi.plugin.deleteMenu('pluginbtn1');
         });
   });
 
@@ -52,8 +55,6 @@ Bibi.plugin.sample1.init = function(){
   Bibi.plugin.bind("closePanel", function(){
     console.log("Plugin call:: sample1 closePanel");
   });
-
-
 }
 
 // Init

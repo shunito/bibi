@@ -2421,9 +2421,10 @@ Bibi.plugin.unbind = function( event ){
 
 
 Bibi.plugin.call = function( event ){
-	var f, e, func, fn = Bibi.plugin.fn[event];
-	if( typeof fn === 'undefined'){ return; }
-
+	var f, e, func, fn;
+	if( typeof Bibi.plugin.fn[event] === 'undefined'){ return; }
+	
+	fn = Bibi.plugin.fn[event];
 	for( f in fn ){
 		func = fn[f];
 		if ( typeof func === 'function' ){
@@ -2452,6 +2453,12 @@ Bibi.plugin.addMenu = function( btn, func ){
 		onclick: function(){ func(); }
 		}));
 }
+
+Bibi.plugin.deleteMenu = function( id ){
+	var elm = document.getElementById(id);
+	sML.deleteElement(elm);
+}
+
 
 //==============================================================================================================================================
 //----------------------------------------------------------------------------------------------------------------------------------------------
