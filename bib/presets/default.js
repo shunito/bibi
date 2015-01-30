@@ -33,6 +33,6 @@ P = {
 
 	"plugins"                           : [
 	                                        {"name":"Google Analytics","script":"GoogleAnalytics.js"},
-	                                        {"name":"Sample Plugin1","script":"sample1.js"}  ],
+	                                        {"name":"EPUBCFI","script":"bd_epubcfi.js"}  ],
 
 "loaded": true } // do not edit.
