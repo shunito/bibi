@@ -14,6 +14,13 @@ Bibi.plugin.epubcfi = {
 Bibi.plugin.epubcfi.init = function(){
     O.log(2, "plugin " + this.name + " loaded");
 
+	/////////////////////////////////////////////////////////////////
+	// Bib/i 設置URL
+	var BiBiBaseURL = 'http://localhost:5000/bib/i/';
+
+	/////////////////////////////////////////////////////////////////
+
+
     function makeRangePath( anchorPath, focusPath ){
         var i,l ,count =0, path = [];
         var anc = anchorPath.split('/'),
@@ -32,7 +39,7 @@ Bibi.plugin.epubcfi.init = function(){
         foc.splice(0,count);
 
         return {
-            parent: path.join('/'),
+            parent: '/' + path.join('/'),
             start : '/' + anc.join('/'),
             end   : '/' + foc.join('/')
         };
@@ -55,7 +62,7 @@ Bibi.plugin.epubcfi.init = function(){
         // 奇数カウント
         list.push( (txtNodeCount *2) +1 );
 
-        while ( p ) {
+        while ( p.nodeName !== '#document' ) {
             if( typeof p.childNodes === 'undefined') { break; }
             c = p.childNodes;
             i = count = 0;
@@ -65,7 +72,7 @@ Bibi.plugin.epubcfi.init = function(){
                 if( c[i] == o ){
                     // テキストノードのみ
                     if( count === 0 ){ break; }
-                    if( typeof c[i].id !== undefined && c[i].id.length > 0 ){
+                    if( typeof c[i].id !== undefined && c[i].id ){
                         str = [ count*2, '[' , c[i].id ,']' ].join('');  
                     }
                     else {
@@ -84,6 +91,24 @@ Bibi.plugin.epubcfi.init = function(){
         return list.join('/');
     }
 
+    function copyEPUBCFI( cfi ){
+      var url = BiBiBaseURL;
+      var epubcfi ,target;
+      
+      epubcfi = [ 'epubcfi(', cfi, ')' ].join('');
+      url += [ '?book=', B.Name, '#' , epubcfi ].join('');
+      console.log( url );
+      console.log( epubcfi );
+      
+      console.log( BibiEPUBCFI.parse( epubcfi ) ); 
+      console.log( tarfet = O.getEPUBCFITarget( cfi ) );
+      console.log( R.getTarget(target) );
+
+      
+      // sample
+      //console.log( BibiEPUBCFI.parse("epubcfi(/6/4!/4/10!/4/2:32[All%20You%20Need%20Is,Love;s=a])") ); 
+      
+    }
 
 
 
@@ -91,6 +116,10 @@ Bibi.plugin.epubcfi.init = function(){
 
         var contents = document.getElementById('epub-contents');
         var iframes = contents.getElementsByTagName('iframe');
+        
+        var spine = B.Package.Spine;
+        var items = B.Package.Manifest.items;
+        
         var page , win, doc;
         var i,l = iframes.length;
 
@@ -109,22 +138,54 @@ Bibi.plugin.epubcfi.init = function(){
                     var range = inWin.getSelection();
                     var pageId = id;
                     var dom, anchorPath, focusPath, path;
+                    var tm , spineNo = 0, itemNo = 0;
+                    var itemref, itemId, idref ,item ,j;
+                    var epubcfi = '/';
 
                     if( range.type === 'None' ){ return null; }
                     dom = range.getRangeAt(0).cloneContents();
                     if( dom.textContent === '' ){ return null; }
                     console.log( pageId, dom.textContent );
-
+                    
+                    tm = pageId.split('-');
+                    spineNo = parseInt(tm[1]);
+                    itemref = spine.itemrefs[ spineNo ];
+                    itemId = itemref.id;
+                    idref = itemref.idref;
+                    
+                    for( j in items ){
+                      item = items[j];
+                      if( idref === item.id ){
+                        break;
+                      }
+                      itemNo++;
+                    }
+                    
                     anchorPath = objtoCFIpath( range.anchorNode ) +':'+ range.anchorOffset;
                     focusPath  = objtoCFIpath( range.focusNode )  +':'+ range.focusOffset;
                     path = makeRangePath( anchorPath, focusPath );
 
-                    // TODO : make package-item path
-                    console.log( 'spine:', B.Package.Spine );
-                    console.log( 'items:', B.Package.Manifest.items );
+                    epubcfi += [ (itemNo+1)*2,'/',(spineNo+1)*2 ].join('');
+                    if( typeof itemref.id !== undefined && itemref.id ){
+                      tm = itemref.id;
+                      epubcfi += [ '[',itemref.id,']' ].join('');
+                    }
+                    epubcfi += '!';
+                    
+                    // Range
+                    //epubcfi +=[ path.parent,',', path.start,',',path.end ].join('');
+                    
+                    // Single Path
+                    epubcfi += path.parent + path.start;
+                    console.log( 'epubcfi:' , epubcfi );
 
-                    console.log( path );
-                    return path;
+                    // TODO : make package-item path
+                    //console.log( 'spine:', spine );
+                    //console.log( 'items:', items );
+                    //console.log( path );
+                    
+                    copyEPUBCFI( epubcfi );
+                    return epubcfi;
                 };
             })();
 
