@@ -19,7 +19,8 @@ Bibi.plugin.epubcfi.init = function(){
 	var BiBiBaseURL = 'http://localhost:5000/bib/i/';
 
 	/////////////////////////////////////////////////////////////////
-
+	
+	Bibi.plugin.epubcfi.EPUBCFI = '';
 
     function makeRangePath( anchorPath, focusPath ){
         var i,l ,count =0, path = [];
@@ -94,23 +95,17 @@ Bibi.plugin.epubcfi.init = function(){
     function copyEPUBCFI( cfi ){
       var url = BiBiBaseURL;
       var epubcfi ,target;
-      
-      epubcfi = [ 'epubcfi(', cfi, ')' ].join('');
-      url += [ '?book=', B.Name, '#' , epubcfi ].join('');
-      console.log( url );
-      console.log( epubcfi );
-      
-      console.log( BibiEPUBCFI.parse( epubcfi ) ); 
-      console.log( tarfet = O.getEPUBCFITarget( cfi ) );
-      console.log( R.getTarget(target) );
-
-      
-      // sample
-      //console.log( BibiEPUBCFI.parse("epubcfi(/6/4!/4/10!/4/2:32[All%20You%20Need%20Is,Love;s=a])") ); 
-      
+            
+      target = O.getEPUBCFITarget( cfi );
+      if( R.getTarget(target) ){
+        epubcfi = encodeURI( [ 'epubcfi(', cfi, ')' ].join('') );
+        url += [ '?book=', B.Name, '#' , epubcfi ].join('');
+        Bibi.plugin.epubcfi.EPUBCFI = url;        
+      }
+      else{
+        console.log( 'ERROR EPUBCFI:',cfi );
+      }
     }
-
-
 
     Bibi.plugin.bind("load", function(){
 
@@ -126,9 +121,9 @@ Bibi.plugin.epubcfi.init = function(){
         for(i=0;i<l;i++){
           page = iframes[i];
 
-          if (page.contentDocument && page.className ==='item') {
-            doc = page.contentDocument;
+          if (page.contentWindow && page.className ==='item') {
             win = page.contentWindow;
+            doc = page.contentDocument || page.contentWindow.document;
 
             var rangeer = ( function(){
                 var inDoc = doc;
@@ -179,25 +174,29 @@ Bibi.plugin.epubcfi.init = function(){
                     epubcfi += path.parent + path.start;
                     console.log( 'epubcfi:' , epubcfi );
 
-                    // TODO : make package-item path
-                    //console.log( 'spine:', spine );
-                    //console.log( 'items:', items );
-                    //console.log( path );
-                    
                     copyEPUBCFI( epubcfi );
                     return epubcfi;
                 };
             })();
-
+            
             doc.addEventListener('mouseup', rangeer , true);
-
         }
-
     }
 
-});
+    Bibi.plugin.addMenu(
+      { id: "tweet",
+        label: "tweet EPUBCFI",
+        img: "../plugin/icon/TWEET-DECK_16x16-32.png" },
+        function(){
+          var url = Bibi.plugin.epubcfi.EPUBCFI;
 
-
+          //alert( Bibi.plugin.epubcfi.EPUBCFI );
+          console.log( Bibi.plugin.epubcfi.EPUBCFI );
+          
+          window.open("https://twitter.com/intent/tweet?url="+ url +"&text=" + "#BiBiEPUBCFI");
+          C.Panel.toggle();
+        });
+    });
 
 }
 
