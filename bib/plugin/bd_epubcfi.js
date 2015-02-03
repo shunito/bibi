@@ -16,7 +16,8 @@ Bibi.plugin.epubcfi.init = function(){
 
 	/////////////////////////////////////////////////////////////////
 	// Bib/i 設置URL
-	var BiBiBaseURL = 'http://localhost:5000/bib/i/';
+	var BiBiBaseURL = 'http://shunito.github.io/bib/i/';
+	var BiBiTweetTags = 'bibidev,EPUBCFI';
 
 	/////////////////////////////////////////////////////////////////
 	
@@ -98,12 +99,13 @@ Bibi.plugin.epubcfi.init = function(){
             
       target = O.getEPUBCFITarget( cfi );
       if( R.getTarget(target) ){
-        epubcfi = encodeURI( [ 'epubcfi(', cfi, ')' ].join('') );
+        epubcfi = [ 'epubcfi(', cfi, ')' ].join('');
         url += [ '?book=', B.Name, '#' , epubcfi ].join('');
-        Bibi.plugin.epubcfi.EPUBCFI = url;        
+        
+        Bibi.plugin.epubcfi.EPUBCFI = url;
       }
       else{
-        console.log( 'ERROR EPUBCFI:',cfi );
+        O.log(2, "plugin Error - EPUBCFI:" + cfi );
       }
     }
 
@@ -167,12 +169,11 @@ Bibi.plugin.epubcfi.init = function(){
                     }
                     epubcfi += '!';
                     
-                    // Range
+                    // Range Path
                     //epubcfi +=[ path.parent,',', path.start,',',path.end ].join('');
                     
                     // Single Path
                     epubcfi += path.parent + path.start;
-                    console.log( 'epubcfi:' , epubcfi );
 
                     copyEPUBCFI( epubcfi );
                     return epubcfi;
@@ -186,14 +187,12 @@ Bibi.plugin.epubcfi.init = function(){
     Bibi.plugin.addMenu(
       { id: "tweet",
         label: "tweet EPUBCFI",
-        img: "../plugin/icon/TWEET-DECK_16x16-32.png" },
+        img: "../plugin/icon/Twitter_logo_white_convert_20150203083543.png" },
         function(){
-          var url = Bibi.plugin.epubcfi.EPUBCFI;
-
-          //alert( Bibi.plugin.epubcfi.EPUBCFI );
-          console.log( Bibi.plugin.epubcfi.EPUBCFI );
+          var url = escape( Bibi.plugin.epubcfi.EPUBCFI );
+          var tags = escape( BiBiTweetTags );
           
-          window.open("https://twitter.com/intent/tweet?url="+ url +"&text=" + "#BiBiEPUBCFI");
+          window.open("https://twitter.com/intent/tweet?url="+ url +"&hashtags=" + tags , 'Twitter');
           C.Panel.toggle();
         });
     });
