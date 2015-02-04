@@ -17,7 +17,7 @@ Bibi.plugin.epubcfi.init = function(){
 	/////////////////////////////////////////////////////////////////
 	// Bib/i 設置URL
 	var BiBiBaseURL = 'http://shunito.github.io/bib/i/';
-	var BiBiTweetTags = 'bibidev,EPUBCFI';
+//	var BiBiTweetTags = 'bibidev,EPUBCFI';
 
 	/////////////////////////////////////////////////////////////////
 	
@@ -185,14 +185,14 @@ Bibi.plugin.epubcfi.init = function(){
     }
 
     Bibi.plugin.addMenu(
-      { id: "tweet",
-        label: "tweet EPUBCFI",
-        img: "../plugin/icon/Twitter_logo_white_convert_20150203083543.png" },
+      { id: "FB_share",
+        label: "share EPUBCFI",
+        img: "../plugin/icon/ic_facebook_20.png" },
         function(){
           var url = escape( Bibi.plugin.epubcfi.EPUBCFI );
-          var tags = escape( BiBiTweetTags );
+//          var tags = escape( BiBiTweetTags );
           
-          window.open("https://twitter.com/intent/tweet?url="+ url +"&hashtags=" + tags , 'Twitter');
+          window.open("https://www.facebook.com/sharer/sharer.php?u=" + url);
           C.Panel.toggle();
         });
     });

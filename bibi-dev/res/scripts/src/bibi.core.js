@@ -912,7 +912,7 @@ L.postprocessItem = function(Item) {
 	L.postprocessLinkage(Item.Path, Item.Body);
 
 	setTimeout(function() {
-		if(Item.contentDocument.styleSheets.length < Item.StyleSheets.length) return setTimeout(arguments.callee, 100);
+//		if(Item.contentDocument.styleSheets.length < Item.StyleSheets.length) return setTimeout(arguments.callee, 100);
 		// Update Background
 		Item.ItemBox.style.background = Item.contentDocument.defaultView.getComputedStyle(Item.HTML).background;  Item.HTML.style.background = "";
 		Item.style.background         = Item.contentDocument.defaultView.getComputedStyle(Item.Body).background;  Item.Body.style.background = "";
