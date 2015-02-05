@@ -22,6 +22,26 @@ Bibi.plugin.epubcfi.init = function(){
 	/////////////////////////////////////////////////////////////////
 	
 	Bibi.plugin.epubcfi.EPUBCFI = '';
+    Bibi.plugin.epubcfi.targetText ='';
+
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '344290689105657',
+      xfbml      : true,
+      version    : 'v2.2'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/ja_JP/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+
+
 
     function makeRangePath( anchorPath, focusPath ){
         var i,l ,count =0, path = [];
@@ -142,7 +162,9 @@ Bibi.plugin.epubcfi.init = function(){
                     if( range.type === 'None' ){ return null; }
                     dom = range.getRangeAt(0).cloneContents();
                     if( dom.textContent === '' ){ return null; }
-                    console.log( pageId, dom.textContent );
+
+                    Bibi.plugin.epubcfi.targetText = dom.textContent;
+                    //console.log( pageId, dom.textContent );
                     
                     tm = pageId.split('-');
                     spineNo = parseInt(tm[1]);
@@ -189,10 +211,33 @@ Bibi.plugin.epubcfi.init = function(){
         label: "share EPUBCFI",
         img: "../plugin/icon/ic_facebook_20.png" },
         function(){
-          var url = escape( Bibi.plugin.epubcfi.EPUBCFI );
-//          var tags = escape( BiBiTweetTags );
-          
-          window.open("https://www.facebook.com/sharer/sharer.php?u=" + url);
+            var url = Bibi.plugin.epubcfi.EPUBCFI;
+            var title = B.Package.Metadata['title'] || '';
+            var disc =  '「' + Bibi.plugin.epubcfi.targetText +'」';
+            var cover = BiBiBaseURL.slice(0,-2) + 'bookshelf/' + B.Name + '/';
+
+            if( typeof B.Package.Manifest['cover-image'].Path !== 'undefined' ){
+                cover += B.Package.Manifest['cover-image'].Path;
+            }
+            else { cover = '' }
+
+            FB.ui({
+                    method: 'feed',
+                    message: 'BiB/i EPUBCFI pluginからシェア',
+                    name: title,
+                    caption: 'share from BiB/i',
+                    description: disc,
+                    link   : url,
+                    picture: cover
+                },
+                function (response) {
+                    // If response is null the user canceled the dialog
+                    if (response != null) {
+                        logResponse(response);
+                    }
+                }
+            );          
+
           C.Panel.toggle();
         });
     });
