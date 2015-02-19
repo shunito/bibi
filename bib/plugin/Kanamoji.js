@@ -27,6 +27,23 @@ Bibi.plugin.kanamoji.init = function(){
      fjs.parentNode.insertBefore(js, fjs);
    }(document, 'script', 'kuromoji'));
 
+    function objectSort(object) {
+        var sorted = [];
+        var array = [];
+        for (key in object) {
+            if (object.hasOwnProperty(key)) {
+                array.push( { k: key, v: object[key] });
+            }
+        }
+        array.sort(function(a, b){
+             return (a.v > b.v) ? -1 : 1;
+        }); 
+     
+        for (var i = 0; i < array.length; i++) {
+            sorted[array[i].k] = array[i].v;
+        }
+        return sorted;
+    }
 
     function addWord(word){
         if( typeof wordList[word] === 'undefined' ){ wordList[word] = 1; }
@@ -37,6 +54,10 @@ Bibi.plugin.kanamoji.init = function(){
         var i, l = token.length;
         var word = '', w, t , prev;
         console.table( token );
+
+        if( token.length === 0 ){
+            return null;
+        }
 
         prev = token[0];
         if( prev.pos === '名詞' ) { word = prev.surface_form; }
@@ -49,22 +70,24 @@ Bibi.plugin.kanamoji.init = function(){
                     word += w;
                 }
                 else{
-                    if( word.length > 0 ){
+                    if( word.length > 1 ){
                         addWord(word);
                     }
                     word = '';                    
                 }
             }
             else{
-                if( word.length > 0 ){
+                if( word.length > 1 ){
                     addWord(word);
                 }
                 word = '';
             }
         }
-        if( word.length > 0 ){
+        if( word.length > 1 ){
             addWord(word);
         }
+
+        wordList = objectSort(wordList);
 
         console.log( wordList );
     }
