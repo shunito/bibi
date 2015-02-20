@@ -17,6 +17,7 @@ Bibi.plugin.kanamoji.init = function(){
     var DIC_URL = "../plugin/kuromoji/dict/";
     var tokenizer = null;
     var wordList = [];
+    var wordCounter = [];
 
     // include Kuromoji.js
   (function(d, s, id){
@@ -45,15 +46,24 @@ Bibi.plugin.kanamoji.init = function(){
         return sorted;
     }
 
-    function addWord(word){
-        if( typeof wordList[word] === 'undefined' ){ wordList[word] = 1; }
-        else{ wordList[word] += 1; }
+    function addWord(word, page){
+        var i ,l = R.Items.length;
+        var w = [];
+        word = word.toString();
+        if( typeof wordList[word] === 'undefined' ){
+            for(i=0;i<l;i++){ w.push(0); }
+            w[page] = 1;
+            wordList[word] = w; 
+        }
+        else{ wordList[word][page] += 1; }
     }
 
-    function tokenCount( token ){
+    function tokenCount( token, page ){
         var i, l = token.length;
         var word = '', w, t , prev;
-        console.table( token );
+        var counter = 0;
+        //console.table( token );
+        wordCounter[page-0] = counter;
 
         if( token.length === 0 ){
             return null;
@@ -71,25 +81,30 @@ Bibi.plugin.kanamoji.init = function(){
                 }
                 else{
                     if( word.length > 1 ){
-                        addWord(word);
+                        addWord(word,page);
+                        counter++;
                     }
                     word = '';                    
                 }
             }
             else{
                 if( word.length > 1 ){
-                    addWord(word);
+                    addWord(word,page);
+                    counter++;
                 }
                 word = '';
             }
         }
         if( word.length > 1 ){
-            addWord(word);
+            addWord(word,page);
+            counter++;
         }
 
-        wordList = objectSort(wordList);
+        //wordList = objectSort(wordList);
+        wordCounter[page] = counter;
 
-        console.log( wordList );
+        //console.log( wordList );
+        return wordList;
     }
 
     function getPageBody(page){
@@ -98,10 +113,68 @@ Bibi.plugin.kanamoji.init = function(){
         var body = doc.getElementsByTagName('body')[0];
         return body;
     }
+    
+    function getItemList(){
+        var item, items = R.Items;
+        var i, l = items.length;
+        var body, list = [];
+        
+        if( l === 0) { return null; }
+        for(i=0;i<l;i++){
+            item = items[i];
+            body = getPageBody(i);            
+            list.push(body.innerText);
+        }
+        return list;
+    }
+    
+    function tfidf(){
+        var i, l, count;
+        var tf, df, idf, N , Z;
+        var tmp = [];
+        
+        l = N = wordCounter.length;
+        
+        function sum(list){
+            var i,l = list.length;
+            var sum =0;
+            for(i=0;i<l;i++){
+                sum += list[i];
+            }
+            return sum;
+        }
+        
+        for(i=0;i<l;i++){ tmp[i] = []; }
+        
+        for (list in wordList) {
+            if (wordList.hasOwnProperty(list)) {
+                count = wordList[list];
+                for(i=0;i<l;i++){
+                    if( count[i] >= 1 ){
+                        Z = wordCounter[i];
+                        tf = count[i] / Z;
+                        df = sum( count );
+                        idf = Math.log( N / df ) + 1;
+                        //console.log( list, i, count[i], Z, tf, df);
+                        //console.log( list, i , tf * idf);
+                        tmp[i][list] = tf*idf ;
+                    }
+                }
+            }
+        }
+        for(i=0;i<l;i++){ tmp[i] = objectSort(tmp[i]); }
+        return tmp;
+    }
 
 
     Bibi.plugin.bind("load", function(){
+
+        var textList = getItemList();
+
         kuromoji.builder({ dicPath: DIC_URL }).build(function (error, _tokenizer) {
+            var i,l = textList.length;
+            var tokens;
+            
             if (error != null) {
                 console.log(error);
                 return;
@@ -109,23 +182,29 @@ Bibi.plugin.kanamoji.init = function(){
             tokenizer = _tokenizer;
 
             // Kuromoji Ready!
+            wordList = [];
+            for(i=0;i<l;i++){
+                tokens = tokenizer.tokenize( textList[i] );
+                tokenCount( tokens, i );                    
+            }
 
             Bibi.plugin.addMenu(
               { id: "Kanamoji",
                 label: "kuromoji do it",
                 img: "../plugin/icon/ic_error_grey600_18dp.png" },
             function(){
-                var token;
-                var page = R.getCurrentPages();
-                var body;
-
-                wordList = [];                    
-                pageNo = page.Start.Item.ItemIndex;
-                body = getPageBody( pageNo );
-                //console.log( body.innerText );
-
-                token = tokenizer.tokenize(body.innerText);
-                tokenCount( token );
+                var list , w , i =1;
+                
+                //console.log(wordList);
+                //console.log(wordCounter);
+                list = tfidf();
+                for(w in list){
+                    if (list.hasOwnProperty(w)) {
+                        console.log( 'page'+i, list[w] );
+                        i++;
+                    }
+                }
+                
                 C.Panel.toggle();
             });
         });  
