@@ -75,7 +75,7 @@ Bibi.plugin.kanamoji.init = function(){
         for( i=1;i<l;i++){
             t = token[i]
             w = t.surface_form;
-            if( t.pos === '名詞' ) {
+            if( t.pos === '名詞' && t.pos_detail_1 !== '数' ) {
                 if( w  !== "、" ){
                     word += w;
                 }
