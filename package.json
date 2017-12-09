@@ -1,41 +1,52 @@
 {
-	"name": "bibi",
-	"version": "0.997.7",
-	"author": {
-		"name": "Satoru MATSUSHIMA"
-	},
-	"description": "BiB/i | EPUB Reader on your website.",
-	"keywords": [
-		"EPUB",
-		"Reading System",
-		"Viewer",
-		"Books-in-Browsers"
-	],
-	"license": "MIT",
-	"homepage": "http://bibi.epub.link/",
-	"repository": {
-		"type": "git",
-		"url": "git://github.com/satorumurmur/bibi.git"
-	},
-	"bugs": "https://github.com/satorumurmur/bibi/issues",
-	"readmeFilename": "README.md",
-	"devDependencies": {
-		"grunt": "~0.4.5",
-		"grunt-combine-media-queries": "~1.0.15",
-		"grunt-contrib-clean": "~0.5.0",
-		"grunt-contrib-compass": "~0.7.2",
-		"grunt-contrib-compress": "~0.8.0",
-		"grunt-contrib-concat": "~0.4.0",
-		"grunt-contrib-copy": "~0.5.0",
-		"grunt-contrib-csslint": "~0.2.0",
-		"grunt-contrib-cssmin": "~0.9.0",
-		"grunt-contrib-jshint": "~0.10.0",
-		"grunt-contrib-sass": "~0.7.3",
-		"grunt-contrib-uglify": "~0.4.0",
-		"grunt-contrib-watch": "~0.6.1",
-		"matchdep": "~0.3.0",
-		"bower": "~1.3.9"
-	},
-	"dependencies": {
-	}
+  "name": "bibi",
+  "version": "0.999.9-r7",
+  "author": {
+    "name": "Satoru MATSUSHIMA"
+  },
+  "description": "BiB/i | EPUB Reader on your website.",
+  "keywords": [
+    "EPUB",
+    "Reading System",
+    "Viewer",
+    "Books-in-Browsers"
+  ],
+  "license": "MIT",
+  "homepage": "http://bibi.epub.link",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/satorumurmur/bibi.git"
+  },
+  "bugs": "https://github.com/satorumurmur/bibi/issues",
+  "readmeFilename": "README.md",
+  "scripts": {
+    "postinstall": "bower install",
+    "start": "gulp",
+    "update": "gulp update",
+    "build": "gulp build",
+    "distribute": "gulp distribute"
+  },
+  "devDependencies": {
+    "bower": "^1.8.0",
+    "browser-sync": "^2.18.8",
+    "cssnano": "^3.10.0",
+    "del": "^2.2.2",
+    "fs": "0.0.2",
+    "gulp": "^3.9.1",
+    "gulp-combine-mq": "^0.4.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-if": "^2.0.2",
+    "gulp-notify": "^2.2.0",
+    "gulp-plumber": "^1.1.0",
+    "gulp-postcss": "^6.4.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-replace": "^0.5.4",
+    "gulp-sass": "^2.3.2",
+    "gulp-uglify": "^1.5.4",
+    "gulp-zip": "^3.2.0",
+    "merge-stream": "^1.0.1",
+    "postcss-cssnext": "^2.10.0",
+    "run-sequence": "^1.2.2"
+  },
+  "dependencies": {}
 }

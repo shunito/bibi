@@ -1,49 +1,37 @@
-# OS Metafiles
+# OS Metafiles / Thumbnails
 # --------------------------------------------------------------------------------
 .DS_Store
 .AppleDouble
 .LSOverride
 .Spotlight-V100
 .Trashes
-Icon
-
-# Thumbnails
-# --------------------------------------------------------------------------------
 ._*
+Icon
 
 # Node
 # --------------------------------------------------------------------------------
-# package.json
 node_modules
+npm-debug.log
 
-# Grunt
+# Bower
 # --------------------------------------------------------------------------------
-# Gruntfile.js
+bower_components
 
-# Ruby
+# BiB/i: Compiled CSS/JavaScript files
 # --------------------------------------------------------------------------------
-.bundle
-vendor/bundle
-# Gemfile
-# Gemfile.lock
+bib/i/extensions
+bib/i/res/styles
+bib/i/res/scripts
+bib/i.css
+bib/i.js
 
-
-# SASS / Compass
+# BiB/i: Bookshelf
 # --------------------------------------------------------------------------------
-*.sass-cache
-# config.rb
+bib/bookshelf/*
+!bib/bookshelf/.gitkeep
+dev-bib/bookshelf/*
+!dev-bib/bookshelf/.gitkeep
 
-# Directories
-# --------------------------------------------------------------------------------
-# bib/bookshelf
-
-# CSS
-# --------------------------------------------------------------------------------
-# bib/i/res/styles/*.css
-
-# JavaScript
-# --------------------------------------------------------------------------------
-# bib/i/res/scripts/*.js
 
 # bookshelf
 bib/bookshelf/*
@@ -56,3 +44,5 @@ bib/plugin/icon
 # --------------------------------------------------------------------------------
 archives/*
 *.zip
+____IGNORE____
+
